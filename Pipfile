@@ -1,0 +1,24 @@
+[[source]]
+
+verify_ssl = true
+url = "https://pypi.python.org/simple"
+name = "pypi"
+
+
+[packages]
+
+requests = "*"
+schema = "*"
+jsane = "*"
+pytest = "*"
+pytest-allure-adaptor = "*"
+pymongo = "*"
+configparser = "*"
+redis = "*"
+records = "*"
+locustio = "*"
+requests-threads = "*"
+Faker = "*"
+
+
+[dev-packages]

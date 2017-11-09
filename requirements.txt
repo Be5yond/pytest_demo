@@ -1,0 +1,8 @@
+requests
+schema
+jsane
+pytest
+pytest-allure-adaptor
+pymongo
+configparser
+redis
