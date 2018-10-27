@@ -1,12 +1,9 @@
 [[source]]
-
 verify_ssl = true
 url = "https://pypi.python.org/simple"
 name = "pypi"
 
-
 [packages]
-
 requests = "*"
 schema = "*"
 jsane = "*"
@@ -19,6 +16,7 @@ records = "*"
 locustio = "*"
 requests-threads = "*"
 Faker = "*"
-
+tablib = "*"
+arrow = "*"
 
 [dev-packages]

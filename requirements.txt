@@ -6,3 +6,5 @@ pytest-allure-adaptor
 pymongo
 configparser
 redis
+arrow
+tablib

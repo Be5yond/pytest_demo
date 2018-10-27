@@ -1,8 +1,7 @@
-
 import re
 from faker import Faker
 from comm.logger import logger
-
+from comm.tools import *
 
 fake = Faker('zh_CN')
 
@@ -14,9 +13,9 @@ def render(p, cache):
     :param cache: parameter pool for data replacement
     :return: new json object
     """
-    matcher = re.compile('^{{\s*([A-Za-z]+)\s*}}$')
-    func_matcher = re.compile('^{%\s*([0-9a-zA-Z()"_.=]+)\s*%}$')
-    if isinstance(p, str) and re.match(matcher, p):
+    var_matcher = re.compile('^{{\s*([0-9A-Za-z_]+)\s*}}$')
+    func_matcher = re.compile('^{%\s*([0-9a-zA-Z()"_.=-]+)\s*%}$')
+    if isinstance(p, str) and re.match(var_matcher, p):
         try:
             para = p.strip('{ }')
             return cache.get(para, p)
@@ -36,7 +35,6 @@ def render(p, cache):
     elif isinstance(p, list):
         for i, v in enumerate(p):
             p[i] = render(v, cache)
-        # return list(map(render, *((i,cache) for i in p)))
     return p
 
 

@@ -1,13 +1,12 @@
 import uuid
 import time
-from lib.Req import Req
+from lib.Req import Req, DefaultData
 
 
 class LibReq(Req):
-    def __init__(self, host=None):
-        self._host = host
-        super(LibReq, self).__init__()
-        self.acc_token = None
+    def __init__(self, env='test'):
+        super().__init__(env)
+        self._host = self.env_cfg['host']
 
     def _get(self, path, para):
         """
@@ -36,14 +35,21 @@ class LibReq(Req):
 
     def _add_common_params(self, args):
         trace_id = str(uuid.uuid4())
-        self.cache['{{ trace_id }}'] = trace_id
+        self.cache['trace_id'] = trace_id
         args.update({'traceId': trace_id,
                      'timestamp': int(time.time()*1000),
-                     'accessToken': self.acc_token,
                     })
         return args
 
     def login(self, data):
         self._post('/post', data)
+
+    @DefaultData(data={
+        "StartTime": "{% timestr(minutes=-65) %}",
+        "EndTime": "{% timestr() %}",
+        "Type": "default"
+    })
+    def get_pv(self, para):
+        self._get('/get', para)
 
 

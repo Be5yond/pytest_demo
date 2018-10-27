@@ -1,9 +1,11 @@
-
 import re
-from json import JSONDecodeError
+import os
+import json
 import jsane
 import pytest
+import configparser
 import requests
+from copy import copy
 from schema import Schema, SchemaError
 
 from comm.logger import logger
@@ -11,10 +13,14 @@ from comm.render import render
 
 
 class Req(object):
-    def __init__(self):
+    def __init__(self, env='test'):
         self.session = requests.Session()
         self.response = None
-        self.cache = {}
+        config = configparser.ConfigParser()
+        HOME_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config.read(HOME_PATH + '/config.ini')
+        self.env_cfg = dict(config.items('env_{}'.format(env)))
+        self.cache = json.loads(self.env_cfg.get('cache', '{}'))
 
     def send(self, method, url, variable=None, para=None, json=None, data=None, header=None, files=None):
         """
@@ -31,8 +37,7 @@ class Req(object):
         """
 
         if variable:
-            for key, value in variable.items():
-                url = url.replace(key, str(value))
+            url = url.format(**variable)
         req = requests.Request(method, url, params=para, json=json, data=data, headers=header, files=files)
         prepped = self.session.prepare_request(req)
         self.response = self.session.send(prepped)
@@ -41,12 +46,11 @@ class Req(object):
         body = json or data
         logger.debug('<= request data => \n{}'.format(jsane.dumps(body, indent=4, ensure_ascii=False)))
         logger.debug('<= response data => \n{}'.format(jsane.dumps(self.jsan().r(), indent=4, ensure_ascii=False)))
-
+        logger.debug('<= time elapsed => \n{}s'.format(self.response.elapsed.total_seconds()))
         return self.response
 
     def validate_resp(self, scm):
         """
-
         :param scm: schema data
         :return:
         """
@@ -68,7 +72,7 @@ class Req(object):
 
         try:
             return jsane.from_dict(self.response.json())
-        except JSONDecodeError as e:
+        except json.JSONDecodeError as e:
             logger.debug('<= err msg => \n{}'.format(e))
             logger.debug('<= response content => \n{}'.format(self.response.content))
             pytest.fail('response data format does not match the JSON format')
@@ -77,24 +81,35 @@ class Req(object):
         return render(para, self.cache)
 
 
+class DefaultData:
+    def __init__(self, **kwargs):
+        self.temp = kwargs
 
-if __name__=='__main__':
+    def __call__(self, func):
+        def wrap(*args, **kwargs):
+            for k, v in self.temp.items():
+                temp = copy(v)
+                temp.update(kwargs[k])
+                kwargs[k] = temp
+            return func(*args, **kwargs)
+        return wrap
+
+
+if __name__ == '__main__':
     req = Req()
-    req.cache.update({'val': 419})
-    a={'key':'{% str %}', 'key_lst':[{'lk':'{% int %}'},'uiui', 9090],'key_dict': {'dk': 7879, 'dk2':'{% True %}'}}
-    print(req._update_params(a))
-    import time
-    start = time.time()
-    for _ in range(1):
-        b = {
-            'key': {
-                'lk': '{% fake.pystr(max_chars=10) %}',
-                'phone': '{% fake.phone_number() %}',
-                'company': '{% fake.company() %}',
-                'str': '{% str %}',
-                'tu':['{{ val }}', {'newkey': '{{ val }}'}]
-            }
-        }
-        print(req._update_params(b))
-    print(time.time()- start)
+    # req.cache.update({'val': 419})
+    # import time
+    # start = time.time()
+    # for _ in range(1):
+    #     b = {
+    #         'key': {
+    #             'lk': '{% fake.pystr(max_chars=10) %}',
+    #             'phone': '{% fake.phone_number() %}',
+    #             'company': '{% fake.company() %}',
+    #             'str': '{% str %}',
+    #             'tu': ['{{ val }}', {'newkey': '{{ val }}'}]
+    #         }
+    #     }
+    #     print(req._update_params(b))
+    # print(time.time() - start)
 
