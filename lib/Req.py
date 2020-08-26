@@ -96,20 +96,4 @@ class DefaultData:
 
 
 if __name__ == '__main__':
-    req = Req()
-    # req.cache.update({'val': 419})
-    # import time
-    # start = time.time()
-    # for _ in range(1):
-    #     b = {
-    #         'key': {
-    #             'lk': '{% fake.pystr(max_chars=10) %}',
-    #             'phone': '{% fake.phone_number() %}',
-    #             'company': '{% fake.company() %}',
-    #             'str': '{% str %}',
-    #             'tu': ['{{ val }}', {'newkey': '{{ val }}'}]
-    #         }
-    #     }
-    #     print(req._update_params(b))
-    # print(time.time() - start)
-
+    pass

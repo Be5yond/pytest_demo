@@ -2,14 +2,21 @@
 import allure
 import pytest
 
-from comm import db
-from lib.lib import LibReq
+from lib.seal import Seal
 
 
 @pytest.fixture(scope='class')
 def user(request):
+    """Seal系统实例化一个user
+
+    Args:
+        request ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     env = request.config.getoption("--env")
-    req = LibReq(env=env)
+    req = Seal(env=env)
     return req
 
 
