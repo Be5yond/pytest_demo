@@ -13,7 +13,7 @@
 * 如何提高自动化case的编写效率？
 * 如何写可读性高的自动化case，达到代码即是用例的效果？
 * 如何减少编码量，降低自动化case编码人员的技术能力要求？   
-### 以下所有的设计都是围绕这两点展开，从代码组织和数据管理两个方面入手。
+### 以下所有的设计都是围绕这两点展开，从代码组织和数据管理两个方面入手。[示例demo](https://github.com/Be5yond/pytest_demo/wiki/1.%E4%BB%A3%E7%A0%81%E5%8D%B3%E7%94%A8%E4%BE%8B%EF%BC%88case%E7%9A%84%E5%8F%AF%E8%AF%BB%E6%80%A7%E5%92%8C%E6%98%93%E7%94%A8%E6%80%A7%EF%BC%89)
 
 
 # 核心特性
@@ -55,7 +55,7 @@
 ![测试数据减少](https://github.com/Be5yond/pytest_demo/blob/master/datas/screenshot_data.png?raw=true)
 
 ## example
-[分层模块化组织自动化测试的实践demo](https://github.com/Be5yond/pytest_demo/wiki/%E4%BB%A3%E7%A0%81%E5%8D%B3%E7%94%A8%E4%BE%8B%EF%BC%88case%E7%9A%84%E5%8F%AF%E8%AF%BB%E6%80%A7%E5%92%8C%E6%98%93%E7%94%A8%E6%80%A7%EF%BC%89)
+[分层模块化组织自动化测试的实践demo](https://github.com/Be5yond/pytest_demo/wiki/1.%E4%BB%A3%E7%A0%81%E5%8D%B3%E7%94%A8%E4%BE%8B%EF%BC%88case%E7%9A%84%E5%8F%AF%E8%AF%BB%E6%80%A7%E5%92%8C%E6%98%93%E7%94%A8%E6%80%A7%EF%BC%89)
 
 # 快速开始
 - clone本项目
