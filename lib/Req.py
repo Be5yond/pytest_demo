@@ -2,6 +2,7 @@ import re
 import os
 import json
 import jsane
+import jmespath
 import pytest
 import configparser
 import requests
@@ -49,10 +50,11 @@ class Req(object):
         logger.debug('<= time elapsed => \n{}s'.format(self.response.elapsed.total_seconds()))
         return self.response
 
-    def validate_resp(self, scm):
-        """
-        :param scm: schema data
-        :return:
+    def validate_resp(self, scm: str):
+        """ 校验response返回数据
+
+        Args:
+            scm (str): 数据校验模板
         """
         data = self.response.json()
         scm = self._update_params(scm)
@@ -64,6 +66,25 @@ class Req(object):
             logger.error('<= schema template => \n{}'.format(scm))
             logger.error('<= err msg => \n{}'.format(e))
             pytest.fail(msg=str(e), pytrace=False)
+        
+    def validate_data(self, json_query: str, scm: str):
+        """ 校验返回体的部分字段
+
+        Args:
+            json_query (str): 待校验数据的json_query,
+            scm (str): 数据校验模板
+        """
+        data = jmespath.search(json_query, self.response.json())
+        scm = self._update_params(scm)
+        schema = Schema(scm, ignore_extra_keys=True)
+        try:
+            schema.validate(data)
+            logger.debug('<= schema template => \n{}'.format(scm))
+        except SchemaError as e:
+            logger.error('<= schema template => \n{}'.format(scm))
+            logger.error('<= err msg => \n{}'.format(e))
+            pytest.fail(msg=str(e), pytrace=False)
+
 
     def jsan(self):
         """
@@ -77,8 +98,18 @@ class Req(object):
             logger.debug('<= response content => \n{}'.format(self.response.content))
             pytest.fail('response data format does not match the JSON format')
 
-    def _update_params(self, para):
+    def stash(self, path: str, key: str):
+        """ 通过path取出数据并，缓存数据到cache
+
+        Args:
+            path (str): jsonpath for target object
+            key (str): data key in self.cache 
+        """
+        self.cache[key] = jmespath.search(path, self.response.json())
+
+    def _update_params(self, para: object) -> object:
         return render(para, self.cache)
+
 
 
 class DefaultData:
@@ -89,11 +120,12 @@ class DefaultData:
         def wrap(*args, **kwargs):
             for k, v in self.temp.items():
                 temp = copy(v)
-                temp.update(kwargs[k])
+                temp.update(kwargs.get(k, {}))
                 kwargs[k] = temp
             return func(*args, **kwargs)
         return wrap
 
 
 if __name__ == '__main__':
-    pass
+    req=Req()
+
