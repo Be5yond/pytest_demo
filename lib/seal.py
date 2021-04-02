@@ -18,7 +18,6 @@ class Seal(Session):
 
     def _common_params(self):
         trace_id = str(uuid.uuid4())
-        # self.cache['trace_id'] = trace_id
         args = {
             'traceId': trace_id,
             'timestamp': int(time.time()*1000),
@@ -32,6 +31,7 @@ class Seal(Session):
             data (dict): 请求参数
         """
         self.post(self._host+urls.LOGIN_SEAL, json=data)
+        self.stash(key='acc_token', json_query='args.traceId')
 
     @defaultdata(params={
         "StartTime": "{% timestr(minutes=-65) %}",
@@ -47,14 +47,14 @@ class Seal(Session):
         Args:
             data (dict): 工单信息
         """
-        self.post(self._host+urls.ORDER_COMMIT, data)
+        self.post(self._host+urls.ORDER_COMMIT, json=data)
 
-    def get_order_detail(self, data: dict):
+    def get_order_detail(self, params: dict):
         """提交工单
 
         Args:
             data (dict): 工单信息
         """
-        self.get(self._host+urls.ORDER_DETAIL, data)
+        self.get(self._host+urls.ORDER_DETAIL, params=params)
         
 

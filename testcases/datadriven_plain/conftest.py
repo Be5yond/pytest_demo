@@ -28,7 +28,6 @@ def user_login(user):
         'password': '{{ pwd }}'
     }
     user.login(data)
-    user.stash(key='acc_token', json_query='args.traceId')
 
 
 if __name__ == '__main__':

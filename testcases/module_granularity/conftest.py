@@ -38,9 +38,6 @@ def user_login(user):
         'password': '{{ pwd }}'
     }
     user.login(data)
-    access_token = user.jsan().json.traceId()
-    user.acc_token = access_token
-    user.cache['acc_token'] = access_token
 
 
 
@@ -52,17 +49,17 @@ def auditor_login(auditor):
         'password': '{{ pwd }}'
     }
     auditor.login(data)
-    access_token = auditor.jsan().json.password()
-    auditor.cache['acc_token'] = access_token
 
 
 @allure.step('创建一个审核通过的工单')
 @pytest.fixture(scope='class')
 def create_valid_order(user, auditor):
-    user.commit_order()
-    order_id = user.jsan().json.type()
-    auditor.approve({'order_id': order_id})
-    user.cache['order_id'] = order_id
+    # 提交工单
+    user.commit_order({'type': 1})
+    # 缓存工单id
+    user.stash(key='order_id', json_query='json.type')
+    # 使用缓存的id
+    auditor.approve({'order_id': user.cache['order_id']})
 
 
 if __name__ == '__main__':

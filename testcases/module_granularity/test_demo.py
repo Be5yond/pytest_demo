@@ -1,4 +1,3 @@
-from cases.module_granularity.conftest import auditor
 import pytest
 import allure
 
@@ -7,14 +6,22 @@ import allure
 class TestAuditClass(object):
     @allure.feature("工单审核")
     @pytest.mark.parametrize('data,scm', [
-        ([
-            {'type': 1, 'category': 'category'}, 
-            {'result': 1, 'reason': ''}, 
-            {'order_id': '{{ order_id }}'}
-         ], 
-         {
-            'args': '{% dict %}'
-         }),
+        (
+            [
+                {'type': 1, 'category': 'category'}, 
+                {'result': 1, 'reason': ''}, 
+                {'order_id': '{{ order_id }}'}
+            ],   #  data数据
+            {'args': '{% dict %}'}  # schema数据
+        ),  # 第一组数据
+        (
+            [
+                {'type': 2, 'category': 'category'}, 
+                {'result': 1, 'reason': ''}, 
+                {'order_id': '{{ order_id }}'}
+            ],   # data数据
+            {'args': '{% dict %}'} # schema数据
+        ),  #第二组数据
     ])
     def test_audit_pass(self, user, auditor, data, scm):
         with allure.step('1.提交工单'):
@@ -24,4 +31,13 @@ class TestAuditClass(object):
             auditor.approve(data[1])
         with allure.step('3.验证工单状态为已通过'):
             user.get_order_detail(data[2])
-            user.validate_resp(scm)
+            user.validate(scm)
+
+    @allure.feature("工单审核")
+    @pytest.mark.parametrize('data,scm', [
+        ({'order_id': '{{ order_id }}'}, {'args': '{% dict %}'})
+    ])
+    def test_order_detail(self, create_valid_order, user, data, scm):
+        user.get_order_detail(data)
+        user.validate(scm)
+
