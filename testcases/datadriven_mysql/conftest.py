@@ -2,7 +2,7 @@
 import allure
 import pytest
 
-from comm import db
+from utils import db
 from lib.lib import LibReq
 
 
