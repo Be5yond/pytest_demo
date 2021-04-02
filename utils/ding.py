@@ -1,15 +1,5 @@
-import time
-import httpx
-import hmac
-import hashlib
-import pathlib
-import base64
-import urllib.parse
-import configparser
-HOME = pathlib.Path(__file__).absolute().parent.parent
-config = configparser.ConfigParser()
-config.read(HOME/'config.ini')
-
+import requests
+from . import config
 
 # def gen_sign(timestamp):
 #     secret_enc = secret.encode('utf-8')
@@ -37,7 +27,7 @@ def send_msg(content):
         }
     }
     
-    httpx.post(config.get('report.ding', 'url'), params=para, json=data)
+    requests.post(config.get('report.ding', 'url'), params=para, json=data)
 
     
 

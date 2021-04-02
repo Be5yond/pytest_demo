@@ -28,9 +28,7 @@ def user_login(user):
         'password': '{{ pwd }}'
     }
     user.login(data)
-    access_token = user.jsan().json.traceId()
-    user.acc_token = access_token
-    user.cache['acc_token'] = access_token
+    user.stash(key='acc_token', json_query='args.traceId')
 
 
 if __name__ == '__main__':

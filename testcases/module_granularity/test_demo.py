@@ -17,11 +17,11 @@ class TestAuditClass(object):
          }),
     ])
     def test_audit_pass(self, user, auditor, data, scm):
-        with allure.step('提交工单'):
+        with allure.step('1.提交工单'):
             user.commit_order(data[0])
-            user.cache['order_id'] = user.jsan().json.type()
-        with allure.step('审核通过'):
+            user.stash('json.type', 'order_id')
+        with allure.step('2.审核通过'):
             auditor.approve(data[1])
-        with allure.step('查看工单状态'):
+        with allure.step('3.验证工单状态为已通过'):
             user.get_order_detail(data[2])
             user.validate_resp(scm)

@@ -2,12 +2,8 @@ import json
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
-import pathlib
-import configparser
-HOME = pathlib.Path(__file__).absolute().parent.parent
-config = configparser.ConfigParser()
-config.read(HOME/'config.ini')
 
+from .import config
 
 
 def sendmail(title, content):

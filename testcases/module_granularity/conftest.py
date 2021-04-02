@@ -64,5 +64,6 @@ def create_valid_order(user, auditor):
     auditor.approve({'order_id': order_id})
     user.cache['order_id'] = order_id
 
+
 if __name__ == '__main__':
     pass

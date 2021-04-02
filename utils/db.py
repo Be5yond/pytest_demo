@@ -3,7 +3,7 @@ import os
 import configparser
 import redis
 import json
-from pymongo import MongoClient
+# from pymongo import MongoClient
 config = configparser.ConfigParser()
 HOME_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -12,14 +12,14 @@ db_cfg = dict(config.items('db'))
 redis_cfg = dict(config.items('redis'))
 
 
-db_client = MongoClient(db_cfg['host'], int(db_cfg['port']))
-database = db_client.get_database(db_cfg['database'])
+# db_client = MongoClient(db_cfg['host'], int(db_cfg['port']))
+# database = db_client.get_database(db_cfg['database'])
 
 
-def data_generator(cls, case_id):
-    data = ((i['data'], i['scm']) for i in database[cls][case_id].find({}, {'_id':0}))
-    descs = [i.get('desc', 'No Description') for i in database[cls][case_id].find({}, {'_id':0, 'desc':1})]
-    return data, descs
+# def data_generator(cls, case_id):
+#     data = ((i['data'], i['scm']) for i in database[cls][case_id].find({}, {'_id':0}))
+#     descs = [i.get('desc', 'No Description') for i in database[cls][case_id].find({}, {'_id':0, 'desc':1})]
+#     return data, descs
 
 
 def get_user_info(key):

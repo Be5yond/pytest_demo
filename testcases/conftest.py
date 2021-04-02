@@ -1,6 +1,7 @@
 import pytest
+import string
 
-from comm import db, ding, mailer
+from utils import db, ding, mailer
 
 
 def pytest_addoption(parser):
@@ -25,7 +26,9 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
     """
     收集测试结果，发送测试报告
     """
-    result = '.'.join([f'{k}, {len(v)}' for k,v in terminalreporter.stats.items() if k])
+    stats = {k: len(v) for k, v in terminalreporter.stats.items() if k}
+    f = lambda x: ('efpwd'+string.ascii_lowercase).index(x[0][0])
+    result = ', '.join([f'<{v} {k}>' for k,v in sorted(stats.items(), key=f)])
     options = [config.option.allure_epics, config.option.allure_features]
     opt_text = '\n'.join(map(str, options))
     content = f'AutoTest Result: \n{result}'
